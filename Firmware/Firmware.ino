@@ -2,9 +2,6 @@
 // Include Libraries
 #include "Arduino.h"
 #include "MaxMatrix.h"
-#include "MPU6050.h"
-#include "Wire.h"
-#include "I2Cdev.h"
 
 
 // Pin Definitions
@@ -18,11 +15,8 @@
 byte ledMatrixinUse = 1;                      //Specify how many Max7219 led matrices are chained
 int ledMatrixtextScrollingSpeed = 50;        //Specify the scrolling speed
 char ledMatrixStr[] = "Hello World!    ";     //Specify the string to be displayed
-int16_t mpu6050Ax, mpu6050Ay, mpu6050Az;
-int16_t mpu6050Gx, mpu6050Gy, mpu6050Gz;
 // object initialization
 MaxMatrix ledMatrix(LEDMATRIX_PIN_DIN,LEDMATRIX_PIN_CS,LEDMATRIX_PIN_CLK);
-MPU6050 mpu6050;
 
 
 // define vars for testing menu
@@ -41,8 +35,6 @@ void setup()
     
     ledMatrix.init(ledMatrixinUse);       //Initialize Led Matrices
     ledMatrix.setIntensity(5);            //LED Intensity 0-15
-    Wire.begin();
-    mpu6050.initialize();
     menuOption = menu();
     
 }
@@ -57,21 +49,9 @@ void loop()
     //Note that this function is blocking the loop until the end of the scrolling
     ledMatrix.printStringWithShift(ledMatrixStr, ledMatrixtextScrollingSpeed);  // Send scrolling Text
     }
-    else if(menuOption == '2') {
-    // SparkFun MPU-6050 - Accelerometer and Gyro - Test Code
-    mpu6050.getMotion6(&mpu6050Ax, &mpu6050Ay, &mpu6050Az, &mpu6050Gx, &mpu6050Gy, &mpu6050Gz);   //read accelerometer and gyroscope raw data in three axes
-    double mpu6050Temp = ((double)mpu6050.getTemperature() + 12412.0) / 340.0;
-    Serial.print("a/g-\t");
-    Serial.print(mpu6050Ax); Serial.print("\t");
-    Serial.print(mpu6050Ay); Serial.print("\t");
-    Serial.print(mpu6050Az); Serial.print("\t");
-    Serial.print(mpu6050Gx); Serial.print("\t");
-    Serial.print(mpu6050Gy); Serial.print("\t");
-    Serial.print(mpu6050Gz); Serial.print("\t");
-    Serial.print(F("Temp- "));   
-    Serial.println(mpu6050Temp);
-    delay(100);
-
+    else if(menuOption == '2')
+    {
+    // Disclaimer: The MPU-9255 - Triple Axis Accelerometer ,Gyro and Magnetometer Breakout is in testing and/or doesn't have code, therefore it may be buggy. Please be kind and report any bugs you may find.
     }
     
     if (millis() - time0 > timeout)
@@ -90,7 +70,7 @@ char menu()
 
     Serial.println(F("\nWhich component would you like to test?"));
     Serial.println(F("(1) 8x8 LED display Matrix - MAX7219"));
-    Serial.println(F("(2) SparkFun MPU-6050 - Accelerometer and Gyro"));
+    Serial.println(F("(2) MPU-9255 - Triple Axis Accelerometer ,Gyro and Magnetometer Breakout"));
     Serial.println(F("(menu) send anything else or press on board reset button\n"));
     while (!Serial.available());
 
@@ -104,7 +84,7 @@ char menu()
             if(c == '1') 
     			Serial.println(F("Now Testing 8x8 LED display Matrix - MAX7219"));
     		else if(c == '2') 
-    			Serial.println(F("Now Testing SparkFun MPU-6050 - Accelerometer and Gyro"));
+    			Serial.println(F("Now Testing MPU-9255 - Triple Axis Accelerometer ,Gyro and Magnetometer Breakout - note that this component doesn't have a test code"));
             else
             {
                 Serial.println(F("illegal input!"));
